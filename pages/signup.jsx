@@ -1,33 +1,32 @@
-import React, { useState } from 'react';
-import axioswal from 'axioswal';
-import Layout from '../components/layout';
-import redirectTo from '../lib/redirectTo';
+import React, { useState } from "react";
+import axioswal from "axioswal";
+import Layout from "../components/layout";
+import redirectTo from "../lib/redirectTo";
 
 const SignupPage = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     axioswal
-      .post('/api/users', {
+      .post("/api/users", {
         name,
         email,
-        password,
+        password
       })
-      .then((data) => {
-        console.log(data)
-        if (data.status === 'ok') {
-          redirectTo('/');
+      .then(data => {
+        console.log(data);
+        if (data.status === "ok") {
+          redirectTo("/");
         }
-      })
-
+      });
   };
 
   return (
     <Layout>
-      <div style={{ margin: '4rem' }}>
+      <div style={{ margin: "4rem" }}>
         <h1>Sign up</h1>
         <form onSubmit={handleSubmit}>
           <div>
@@ -54,9 +53,7 @@ const SignupPage = () => {
               onChange={e => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit">
-            Sign up
-          </button>
+          <button type="submit">Sign up</button>
         </form>
       </div>
     </Layout>
