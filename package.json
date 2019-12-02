@@ -12,10 +12,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "@material-ui/core": "^4.7.1",
     "axioswal": "^1.0.1",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.17.0",
     "connect-mongo": "^3.2.0",
     "dotenv": "^8.2.0",
+    "formidable": "^1.2.1",
     "mongodb": "^3.3.5",
     "next": "^9.0.2",
     "next-connect": "^0.5.1",

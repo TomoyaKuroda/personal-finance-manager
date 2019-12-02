@@ -1,15 +1,18 @@
 import { MongoClient } from 'mongodb';
 
-const client = new MongoClient(process.env.MONGODB_URI, { useNewUrlParser: true });
+const client = new MongoClient(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-const withDatabase = handler => (req, res) => {
-  if (!client.isConnected()) {
-    return client.connect().then(() => {
-      req.db = client.db(process.env.DB_NAME);
-      return handler(req, res);
-    });
-  }
+export async function setUpDb(db) {
+  await db.collection('tokens').createIndex('expireAt', { expireAfterSeconds: 0 });
+}
+
+export default async function database(req, res, next) {
+  if (!client.isConnected()) await client.connect();
+  req.dbClient = client;
   req.db = client.db(process.env.DB_NAME);
-  return handler(req, res);
-};
-export default withDatabase;
+  await setUpDb(req.db);
+  return next();
+}

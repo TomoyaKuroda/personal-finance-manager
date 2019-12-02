@@ -3,8 +3,6 @@ import connectMongo from 'connect-mongo';
 
 const MongoStore = connectMongo(session);
 
-const withSession = handler => session.withSession(handler, {
-  store: new MongoStore({ url: process.env.MONGODB_URI }),
-});
-
-export default withSession;
+export default function (req, res, next) {
+  return session({ store: new MongoStore({ client: req.dbClient }) })(req, res, next);
+}

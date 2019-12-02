@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import Link from 'next/link'
 import Head from '../components/head'
 import Nav from '../components/nav'
+import { UserContext } from '../components/UserContext';
+import Layout from '../components/layout';
 
 const Home = () => {
   const [date, setDate] = useState(null);
-
+  const { state: { isLoggedIn, user: { name } } } = useContext(UserContext);
   useEffect(() => {
     async function getDate() {
       const res = await fetch('/api/date');
@@ -16,12 +18,19 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
-      <Head title="Home" />
-      <Nav />
+    <Layout title="Home">
+      {/* <Head title="Home" />
+      <Nav /> */}
+
+      <h2>
+          Hello,
+          {' '}
+          {(isLoggedIn ? name : 'stranger')}
+          !
+        </h2>
 
       <div className="hero">
-        <h1 className="title">Welcome to Next!</h1>
+        <h1 className="title">Personal Finance Manager</h1>
         <p className="description">
           To get started, edit the <code>pages/index.js</code> or <code>pages/api/date.js</code> files, then save to reload.
         </p>
@@ -129,8 +138,13 @@ const Home = () => {
           font-size: 13px;
           color: #333;
         }
+        
+        p {
+          color: #888;
+          font-size: 0.8rem;
+        }
       `}</style>
-    </div>
+    </Layout>
   )
 }
 

@@ -4,22 +4,21 @@ import { UserContext } from '../components/UserContext';
 import Layout from '../components/layout';
 import redirectTo from '../lib/redirectTo';
 
-const SignupPage = () => {
+const LoginPage = () => {
   const { dispatch } = useContext(UserContext);
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
     axioswal
-      .post('/api/users', {
-        name,
+      .post('/api/authenticate', {
         email,
         password,
       })
       .then((data) => {
         if (data.status === 'ok') {
+          //  Fetch the user data for UserContext here
           dispatch({ type: 'fetch' });
           redirectTo('/');
         }
@@ -29,16 +28,8 @@ const SignupPage = () => {
   return (
     <Layout>
       <div>
-        <h2>Sign up</h2>
+        <h2>Log in</h2>
         <form onSubmit={handleSubmit}>
-          <div>
-            <input
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-            />
-          </div>
           <div>
             <input
               type="email"
@@ -50,13 +41,13 @@ const SignupPage = () => {
           <div>
             <input
               type="password"
-              placeholder="Create a password"
+              placeholder="Password"
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
           </div>
           <button type="submit">
-            Sign up
+            Log in
           </button>
         </form>
       </div>
@@ -64,4 +55,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default LoginPage;
