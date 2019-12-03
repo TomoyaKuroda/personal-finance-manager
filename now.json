@@ -1,6 +1,6 @@
 {
-    "name": "personal-finance",
-    "version": 1,
+    "name": "personal-finance-manager",
+    "version": 2,
     "build": {
       "env": {
         "MONGODB_URI": "@mongodb_uri",
