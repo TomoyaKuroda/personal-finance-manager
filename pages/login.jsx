@@ -20,7 +20,7 @@ const LoginPage = () => {
         if (data.status === 'ok') {
           //  Fetch the user data for UserContext here
           dispatch({ type: 'fetch' });
-          redirectTo('/');
+          redirectTo('/management');
         }
       });
   };

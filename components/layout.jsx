@@ -3,6 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import axioswal from 'axioswal';
 import { UserContext } from './UserContext';
+import redirectTo from '../lib/redirectTo';
+
 
 export default ({ children, title }) => {
   const { state: { isLoggedIn }, dispatch } = useContext(UserContext);
@@ -13,6 +15,7 @@ export default ({ children, title }) => {
       .then((data) => {
         if (data.status === 'ok') {
           dispatch({ type: 'clear' });
+          redirectTo('/');
         }
       });
   };

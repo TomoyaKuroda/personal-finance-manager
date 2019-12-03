@@ -1,11 +1,13 @@
 import React, { useContext, useState } from 'react';
 import axioswal from 'axioswal';
+import NumberFormat from 'react-number-format';
+import TextField from '@material-ui/core/TextField';
 import { UserContext } from '../../components/UserContext';
 import Layout from '../../components/layout';
 
 const TransactionSection = ({ user: { name: initialName, balance: initialBalance, transactions: initialTransactions }, dispatch }) => {
   const [name, setName] = useState(initialName);
-  const [balance, setBalance] = useState(initialBalance);
+  const [balance, setBalance] = useState(initialBalance || 0);
   const [transactions, setTransactions] = useState(initialTransactions)
 
   const handleSubmit = (event) => {
@@ -20,6 +22,31 @@ const TransactionSection = ({ user: { name: initialName, balance: initialBalance
       });
   };
 
+  function NumberFormatCustom(props) {
+    const { inputRef, onChange, ...other } = props;
+  
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={values => 
+          setBalance(values.value)
+        //   {
+        //   onChange({
+        //     target: {
+        //       value: values.value,
+        //     },
+        //   });
+        // }
+      }
+        thousandSeparator
+        isNumericString
+        prefix="$"
+      />
+    );
+  }
+  
+
 
   return (
     <>
@@ -31,19 +58,32 @@ const TransactionSection = ({ user: { name: initialName, balance: initialBalance
       `}
       </style>
       <section>
-        <h2>Edit Profile</h2>
+        <h2>Total balance</h2>
+      <h2>${balance}</h2>
+        {/* <h2>Update balance</h2> */}
         <form onSubmit={handleSubmit}>
-          <label htmlFor="name">
-            Name
+          {/* <label htmlFor="balance">
+            Update Balance
             <input
               required
-              id="name"
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={e => setName(e.target.value)}
+              id="balance"
+              type="number"
+              placeholder="100"
+              value={balance}
+              min='0'
+              onChange={e => setBalance(e.target.value)}
             />
-          </label>
+          </label> */}
+          <TextField
+        label="Current Balance"
+        value={balance}
+        // onChange={e => setBalance(e.target.value)}
+        // onChange={setBalance}
+        id="formatted-numberformat-input"
+        InputProps={{
+          inputComponent: NumberFormatCustom,
+        }}
+      />
 
           <button type="submit">
             Save
@@ -59,7 +99,7 @@ const SettingPage = () => {
   if (!isLoggedIn) return (<Layout><p>Please log in</p></Layout>);
   return (
     <Layout>
-      <h1>Settings</h1>
+      {/* <h1>Settings</h1> */}
       <TransactionSection user={user} dispatch={dispatch} />
     </Layout>
   );
