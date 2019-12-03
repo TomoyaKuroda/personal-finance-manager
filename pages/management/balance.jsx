@@ -4,23 +4,25 @@ import NumberFormat from "react-number-format";
 import TextField from "@material-ui/core/TextField";
 import { UserContext } from "../../components/UserContext";
 import Layout from "../../components/layout";
+import redirectTo from "../../lib/redirectTo";
 
-const TransactionSection = ({
+const BalanceSection = ({
   user: {
     name: initialName,
     balance: initialBalance,
-    transactions: initialTransactions
+    // transactions: initialTransactions
   },
   dispatch
 }) => {
   const [name, setName] = useState(initialName);
   const [balance, setBalance] = useState(initialBalance);
-  const [transactions, setTransactions] = useState(initialTransactions);
+  // const [transactions, setTransactions] = useState(initialTransactions);
 
   const handleSubmit = event => {
     event.preventDefault();
-    axioswal.patch("/api/user/transaction", {  balance, transactions }).then(() => {
+    axioswal.patch("/api/user/balance", {  balance }).then(() => {
       dispatch({ type: "fetch" });
+      redirectTo('/management');
     });
   };
 
@@ -61,7 +63,7 @@ const TransactionSection = ({
     </>
   );
 };
-const SettingPage = () => {
+const BalancePage = () => {
   const {
     state: { isLoggedIn, user },
     dispatch
@@ -75,8 +77,8 @@ const SettingPage = () => {
   return (
     <Layout>
       {/* <h1>Settings</h1> */}
-      <TransactionSection user={user} dispatch={dispatch} />
+      <BalanceSection user={user} dispatch={dispatch} />
     </Layout>
   );
 };
-export default SettingPage;
+export default BalancePage;

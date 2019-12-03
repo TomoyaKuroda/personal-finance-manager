@@ -119,9 +119,16 @@ export default ({ children, title }) => {
       </Head>
       <header>
         <nav>
-          <Link href="/">
+          {!isLoggedIn ? (
+                      <Link href="/">
+                      <a><h1>Personal Finance Manager</h1></a>
+                    </Link>
+          ) : 
+          (
+            <Link href="/management">
             <a><h1>Personal Finance Manager</h1></a>
           </Link>
+          )}
           <div>
             {(!isLoggedIn ? (
               <>
@@ -132,7 +139,8 @@ export default ({ children, title }) => {
               <>
                 <Link href="/profile"><a>Profile</a></Link>
                 {/* eslint-disable-next-line */}
-            <a role="button" onClick={handleLogout}>Logout</a>
+                <Link href="/"><a role="button" onClick={handleLogout}>Logout</a></Link>
+            
               </>
             ))}
           </div>

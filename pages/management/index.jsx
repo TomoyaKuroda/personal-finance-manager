@@ -3,7 +3,8 @@ import Link from 'next/link';
 import axioswal from 'axioswal';
 import { UserContext } from '../../components/UserContext';
 import Layout from '../../components/layout';
-
+import NumberFormat from "react-number-format";
+import Grid from '@material-ui/core/Grid';
 const ProfilePage = () => {
   const {
     state: {
@@ -39,29 +40,29 @@ const ProfilePage = () => {
           }
           a {
           }
+          {/* .wrapper {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            grid-gap:1em;
+            justify-items:start;
+          } */}
         `}
       </style>
-      <h1>Profile</h1>
-      <div>
-        {profilePicture ? <img src={profilePicture} width="256" height="256" alt={name} /> : null}
-      </div>
-      <div>
+      <Grid container >
+      <Grid  item xs={12} sm={6}>
+      <h1>Current Balance</h1>
         <h2>
-          { balance }
+        <NumberFormat value={balance} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+
         </h2>
-      </div>
-      <div>
-        Bio
-        <p>{ bio }</p>
-      </div>
-      <div>
-        Email
-        <p>{ email }</p>
+        <Link href="/management/balance"><button type="button">Update Balance</button></Link>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <h1>Recent Transactions</h1>
+        <Link href="/management/transaction"><button type="button">Update Transaction</button></Link>
+     </Grid>
 
-      </div>
-      <Link href="/management/transaction"><button type="button">Transaction</button></Link>
-
-      <Link href="/profile/settings"><button type="button">Edit</button></Link>
+      </Grid>
     </Layout>
   );
 };
