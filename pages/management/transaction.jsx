@@ -7,7 +7,7 @@ import Layout from '../../components/layout';
 
 const TransactionSection = ({ user: { name: initialName, balance: initialBalance, transactions: initialTransactions }, dispatch }) => {
   const [name, setName] = useState(initialName);
-  const [balance, setBalance] = useState(initialBalance || 0);
+  const [balance, setBalance] = useState(initialBalance);
   const [transactions, setTransactions] = useState(initialTransactions)
 
   const handleSubmit = (event) => {
