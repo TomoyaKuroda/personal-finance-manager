@@ -69,6 +69,8 @@ const ProfilePage = () => {
           </span>
         ) : null}
       </div>
+      <Link href="/management/transaction"><button type="button">Transaction</button></Link>
+
       <Link href="/profile/settings"><button type="button">Edit</button></Link>
     </Layout>
   );
