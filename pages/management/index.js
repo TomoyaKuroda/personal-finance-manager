@@ -13,6 +13,7 @@ import List from "@material-ui/core/List";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
+import redirectTo from "../../lib/redirectTo";
 
 const Chart = loadable(() => import("react-apexcharts"));
 const useStyles = makeStyles(theme => ({
@@ -53,13 +54,17 @@ const ManagementSection = ({
       let currentTransactions = [...transactions];
       let filteredAry = currentTransactions.filter(e => e !== transaction);
       axioswal
-        .patch("/api/user/transactions", { transactions: filteredAry })
+        .patch("/api/user/transactions", { transactions: filteredAry, balance })
         .then(() => {
           dispatch({ type: "fetch" });
         });
       setAnchorEl(null);
       setTransactions(filteredAry);
     };
+
+    const editTransaction = transaction =>{
+      redirectTo(`/management/editTransaction?id=${transaction.id}`)
+    }
     return (
       <Fragment key={transaction.id}>
         <ListItem button onClick={handleClick}>
@@ -93,7 +98,7 @@ const ManagementSection = ({
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={() => {}}>Edit</MenuItem>
+          <MenuItem onClick={() => {editTransaction(transaction)}}>Edit</MenuItem>
           <MenuItem onClick={() => deleteTransaction(transaction)}>
             Delete
           </MenuItem>
