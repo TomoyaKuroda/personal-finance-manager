@@ -8,15 +8,11 @@ import redirectTo from "../../lib/redirectTo";
 
 const BalanceSection = ({
   user: {
-    name: initialName,
     balance: initialBalance,
-    // transactions: initialTransactions
   },
   dispatch
 }) => {
-  const [name, setName] = useState(initialName);
   const [balance, setBalance] = useState(initialBalance);
-  // const [transactions, setTransactions] = useState(initialTransactions);
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -36,10 +32,10 @@ const BalanceSection = ({
         `}
       </style>
       <section>
-        <h2>Total balance</h2>
+        <h2>Current balance</h2>
         {/* <h2>${balance}</h2> */}
         <h2>
-        <NumberFormat value={balance} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+        <NumberFormat value={initialBalance} displayType={'text'} thousandSeparator={true} prefix={'$'} />
         </h2>
         <h2>Update balance</h2>
         <form onSubmit={handleSubmit}>
@@ -57,7 +53,7 @@ const BalanceSection = ({
             }}
           />
 
-          <button type="submit">Save</button>
+          <button type="submit">Update</button>
         </form>
       </section>
     </>
@@ -76,7 +72,6 @@ const BalancePage = () => {
     );
   return (
     <Layout>
-      {/* <h1>Settings</h1> */}
       <BalanceSection user={user} dispatch={dispatch} />
     </Layout>
   );

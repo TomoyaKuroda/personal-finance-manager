@@ -14,8 +14,12 @@ import Paper from "@material-ui/core/Paper";
 import Grid from '@material-ui/core/Grid';
 import EditIcon from '@material-ui/icons/Edit';
 import { IconButton } from "@material-ui/core";
-
-
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+const uuidv1 = require('uuid/v1');
 const TransactionSection = ({
   user: { transactions: initialTransactions },
   dispatch
@@ -52,7 +56,7 @@ const TransactionSection = ({
   const handleSubmit = event => {
     event.preventDefault();
       let newTransactions = [...transactions]
-      newTransactions.push({date:date,description:description,category:category,amount:amount})
+      newTransactions.push({date:date,description:description,category:category,amount:amount, id:uuidv1()})
         // console.log(newTransactions)
     //   setTransactions([...transactions, {date,description,category,amount}])
       console.log(newTransactions)
@@ -72,6 +76,53 @@ const TransactionSection = ({
       </style>
       <section>
       <h2>Transactions</h2>
+      <Card>
+      <CardContent>
+        <Typography  color="textSecondary" gutterBottom>
+          Word of the Day
+        </Typography>
+        <Typography variant="h5" component="h2">
+          be
+          nev
+          lent
+        </Typography>
+        <Typography color="textSecondary">
+          adjective
+        </Typography>
+        <Typography variant="body2" component="p">
+          well meaning and kindly.
+          <br />
+          {'"a benevolent smile"'}
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="small">Learn More</Button>
+      </CardActions>
+    </Card>
+
+    <Card>
+      <CardContent>
+        <Typography  color="textSecondary" gutterBottom>
+          Word of the Day
+        </Typography>
+        <Typography variant="h5" component="h2">
+          be
+          nev
+          lent
+        </Typography>
+        <Typography color="textSecondary">
+          adjective
+        </Typography>
+        <Typography variant="body2" component="p">
+          well meaning and kindly.
+          <br />
+          {'"a benevolent smile"'}
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="small">Learn More</Button>
+      </CardActions>
+    </Card>
       <Paper >
       <Table aria-label="simple table">
         <TableHead>

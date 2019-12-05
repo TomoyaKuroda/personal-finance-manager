@@ -57,6 +57,21 @@ export default ({ children, title }) => {
           button:hover, button:active {
             background-color: #f3f4f4;
           }
+          .transactions {
+            background-color: white;
+            border-radius: 4px;
+            margin-left:auto; 
+            margin-right:auto;
+          }
+          .center{
+            margin-left:auto;
+            margin-right:auto
+          }
+          .text-right {
+            position:absolute;
+            right:0;
+            padding-right:0.8em;
+          }
         `}
       </style>
       <style jsx>
@@ -109,10 +124,10 @@ export default ({ children, title }) => {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <meta name="description" content="nextjs-mongodb-app is a continously developed app built with Next.JS and MongoDB. This project goes further and attempts to integrate top features as seen in real-life apps." />
-        <meta property="og:title" content="Next.js + MongoDB App" />
-        <meta property="og:description" content="nextjs-mongodb-app is a continously developed app built with Next.JS and MongoDB. This project goes further and attempts to integrate top features as seen in real-life apps." />
-        <meta property="og:image" content="https://repository-images.githubusercontent.com/201392697/5d392300-eef3-11e9-8e20-53310193fbfd" />
+        <meta name="description" content="Personal Finance Manager help you manage your finance." />
+        <meta property="og:title" content="Personal Finance Manager" />
+        <meta property="og:description" content="Personal Finance Manager help you manage your finance." />
+        <meta property="og:image" content="https://i.imgur.com/ZI0mATQ.png" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
 
