@@ -40,7 +40,7 @@ export default ({ children, title }) => {
             background-color: #f3f5f7;
             text-align: center;
           }
-          button, input, textarea {
+          button, input, textarea, select {
             display: block;
             padding: .8rem 2.5rem;
             font-size: 1rem;
