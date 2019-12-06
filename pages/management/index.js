@@ -31,6 +31,11 @@ const useStyles = makeStyles(theme => ({
   ul: {
     backgroundColor: "inherit",
     padding: 0
+  },
+  p: {
+    float: "left",
+    margin: 0,
+    fontSize: "0.8em"
   }
 }));
 const ManagementSection = ({
@@ -38,7 +43,7 @@ const ManagementSection = ({
   dispatch
 }) => {
   const classes = useStyles();
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const [transactions, setTransactions] = useState(initialTransactions||[]);
   const [balance, setBalance] = useState(initialBalance);
 
   //Menu
@@ -53,18 +58,30 @@ const ManagementSection = ({
     const deleteTransaction = transaction => {
       let currentTransactions = [...transactions];
       let filteredAry = currentTransactions.filter(e => e !== transaction);
+      setTransactions(prevTransactions => {
+        return prevTransactions.filter(item => item !== transaction);
+      });
+
+      let newBalance = balance;
+      newBalance -= transaction.amount;
+      setBalance(prevBalance => {
+        return prevBalance - transaction.amount;
+      });
+
       axioswal
-        .patch("/api/user/transactions", { transactions: filteredAry, balance })
+        .patch("/api/user/transactions", {
+          transactions: filteredAry,
+          balance: newBalance
+        })
         .then(() => {
           dispatch({ type: "fetch" });
         });
       setAnchorEl(null);
-      setTransactions(filteredAry);
     };
 
-    const editTransaction = transaction =>{
-      redirectTo(`/management/editTransaction?id=${transaction.id}`)
-    }
+    const editTransaction = transaction => {
+      redirectTo(`/management/editTransaction?id=${transaction.id}`);
+    };
     return (
       <Fragment key={transaction.id}>
         <ListItem button onClick={handleClick}>
@@ -98,7 +115,13 @@ const ManagementSection = ({
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={() => {editTransaction(transaction)}}>Edit</MenuItem>
+          <MenuItem
+            onClick={() => {
+              editTransaction(transaction);
+            }}
+          >
+            Edit
+          </MenuItem>
           <MenuItem onClick={() => deleteTransaction(transaction)}>
             Delete
           </MenuItem>
@@ -108,7 +131,7 @@ const ManagementSection = ({
   };
 
   let options = {
-    colors:["#00ad9f", "#ff6f00"],
+    colors: ["#00ad9f", "#ff6f00"],
     labels: ["Income", "Expense"],
     legend: {
       position: "bottom",
@@ -134,69 +157,81 @@ const ManagementSection = ({
 
   let income = 0,
     expense = 0;
-  for (let transaction of transactions) {
-    console.log("amount", transaction.amount);
-    let amount = Number(transaction.amount);
-    if (amount > 0) income += amount;
-    else expense += Math.abs(amount);
-  }
+  if (transactions)
+    for (let transaction of transactions) {
+      let amount = Number(transaction.amount);
+      if (amount > 0) income += amount;
+      else expense += Math.abs(amount);
+    }
   let series = [income, expense];
 
   return (
-    <Grid container>
-      <Grid item xs={12} sm={6}>
-        <h2>Current Balance</h2>
-        <h3>
-          <NumberFormat
-            value={balance}
-            displayType={"text"}
-            thousandSeparator={true}
-            prefix={"$"}
-          />
-        </h3>
-        <Link href="/management/balance">
-          <button type="button">Update Balance</button>
-        </Link>
-        <h2>Income and Expense Chart</h2>
-        <Grid container justify="center">
-          <Chart options={options} series={series} type="pie" width="380" />
+    <>
+      <p className={classes.p}>
+        Total balance:{" "}
+        <NumberFormat
+          value={balance}
+          displayType={"text"}
+          thousandSeparator={true}
+          prefix={"$"}
+        />{" "}
+        <Link href="/management/balance">Update Balance</Link>
+      </p>
+      <Grid container>
+        <Grid item xs={12} sm={6}>
+          <h2>This month's net income</h2>
+          <h3>
+            <NumberFormat
+              value={balance}
+              displayType={"text"}
+              thousandSeparator={true}
+              prefix={"$"}
+            />
+          </h3>
+          <h2>Income and Expense Chart</h2>
+          <Grid container justify="center">
+            <Chart options={options} series={series} type="pie" width="380" />
+          </Grid>
         </Grid>
+        <Grid item xs={12} sm={6}>
+          <h2>This month's transactions</h2>
+          <List className={classes.root}>
+            {transactions.map(transaction => (
+              <MenuButton transaction={transaction} key={transaction.id} />
+            ))}
+          </List>
+          <Link href="/management/transaction">
+            <button type="button">Add Transaction</button>
+          </Link>
+        </Grid>
+        <style jsx>{`
+          img {
+            max-width: 100vh;
+            border-radius: 50%;
+            box-shadow: rgba(0, 0, 0, 0.05) 0 10px 20px 1px;
+          }
+          div {
+            color: #777;
+            margin-bottom: 1.5rem;
+          }
+          h2 {
+            text-align: center;
+            color: #333;
+          }
+          p {
+            color: #444;
+            margin: 0.5rem 0;
+          }
+          .transactions {
+            background-color: white;
+            border-radius: 4px;
+          }
+          span {
+            text-align: left;
+          }
+        `}</style>
       </Grid>
-      <Grid item xs={12} sm={6}>
-        <h2>This month's transactions</h2>
-        <List className={classes.root}>
-          {transactions.map(transaction => (
-            <MenuButton transaction={transaction} key={transaction.id} />
-          ))}
-        </List>
-        <Link href="/management/transaction">
-          <button type="button">Add Transaction</button>
-        </Link>
-      </Grid>
-      <style jsx>{`
-        img {
-          max-width: 100vh;
-          border-radius: 50%;
-          box-shadow: rgba(0, 0, 0, 0.05) 0 10px 20px 1px;
-        }
-        div {
-          color: #777;
-          margin-bottom: 1.5rem;
-        }
-        h2 {
-          text-align: center;
-          color: #333;
-        }
-        p {
-          color: #444;
-          margin: 0.5rem 0;
-        }
-        .transactions {
-          background-color: white;
-          border-radius: 4px;
-        }
-      `}</style>
-    </Grid>
+    </>
   );
 };
 
@@ -212,7 +247,7 @@ const ManagementPage = () => {
       </Layout>
     );
   return (
-    <Layout>
+    <Layout title="Management">
       <ManagementSection user={user} dispatch={dispatch} />
     </Layout>
   );

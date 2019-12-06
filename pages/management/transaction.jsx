@@ -21,41 +21,42 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 const uuidv1 = require("uuid/v1");
 const TransactionSection = ({
-  user: { transactions: initialTransactions, balance: initialBalance },
+  user: { transactions: initialTransactions, balance: initialBalance, netIncome: initialNetIncome },
   dispatch
 }) => {
   function createData(date, description, category, amount) {
     return { date, description, category, amount };
   }
 
-  initialTransactions = initialTransactions ? initialTransactions : [];
+  // initialTransactions = initialTransactions ? initialTransactions : [];
 
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const [transactions, setTransactions] = useState(initialTransactions||[]);
   const [balance, setBalance] = useState(initialBalance);
+  const [netIncome, setNetIncome] = useState(initialNetIncome||[])
   const [date, setDate] = useState(new Date());
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
-  const [type, setType] = useState("income");
+  const [type, setType] = useState("expense");
 
-  let rows = [];
-  for (let transaction of transactions) {
-    let convertedAmount =
-      type === "income" ? transaction.amount : -Math.abs(transaction.amount);
-    rows.push(
-      createData(
-        transaction.date,
-        transaction.description,
-        transaction.category,
-        convertedAmount
-      )
-    );
-  }
+  // let rows = [];
+  // for (let transaction of transactions) {
+  //   let convertedAmount =
+  //     type === "income" ? Math.abs(transaction.amount) : -Math.abs(transaction.amount);
+  //   rows.push(
+  //     createData(
+  //       transaction.date,
+  //       transaction.description,
+  //       transaction.category,
+  //       convertedAmount
+  //     )
+  //   );
+  // }
 
   const handleSubmit = event => {
     event.preventDefault();
     let newTransactions = [...transactions];
-    let convertedAmount = type === "income" ? amount : -Math.abs(amount);
+    let convertedAmount = type === "income" ? Math.abs(amount) : -Math.abs(amount);
     console.log("convertedAmount", convertedAmount);
     newTransactions.push({
       date: date,
@@ -68,11 +69,26 @@ const TransactionSection = ({
     let newBalance = balance;
     newBalance += convertedAmount;
 
-    console.log(newTransactions);
+    // net income {month: $$, amount: $$}
+    let convertedNetIncome = [...netIncome] || []
+    let convertedDate = new Date(date)
+    let month = new Date(convertedDate.getFullYear(), convertedDate.getMonth(), 1).toISOString().substring(0,10)
+    // let currentNetIncome = convertedNetIncome[keyDate] ? convertedNetIncome[keyDate] : 0
+
+    const index = convertedNetIncome.findIndex(e=>e.month===month)
+    if (index === -1) {
+      convertedNetIncome.push({month:month, netIncome: Number(convertedAmount)});
+  } else {
+    convertedNetIncome[index].netIncome += Number(convertedAmount);
+  }
+
+    // convertedNetIncome[keyDate] = currentNetIncome + Number(convertedAmount)
+
     axioswal
       .patch("/api/user/transactions", {
         transactions: newTransactions,
-        balance: newBalance
+        balance: newBalance,
+        netIncome: convertedNetIncome
       })
       .then(() => {
         dispatch({ type: "fetch" });
@@ -172,8 +188,9 @@ const TransactionSection = ({
             <Grid item xs={12} sm={6} md={4}>
               <label htmlFor="type">Type</label>
               <select value={type} onChange={e => setType(e.target.value)}>
-                <option value="income">Income</option>
                 <option value="expense">Expense</option>
+                <option value="income">Income</option>
+
               </select>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>

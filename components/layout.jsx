@@ -105,9 +105,9 @@ export default ({ children, title }) => {
             display: table;
           }
           main {
-            padding: 1rem;
+            padding: 0rem;
             max-width: 1040px;
-            margin: 0 auto;
+            margin: 0 0;
           }
           footer {
             font-size: 0.8rem;
@@ -165,8 +165,8 @@ export default ({ children, title }) => {
       <main>
         { children }
       </main>
-      <footer>
-      </footer>
+      {/* <footer>
+      </footer> */}
     </>
   );
 };

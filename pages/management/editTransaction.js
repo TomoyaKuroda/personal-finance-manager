@@ -67,7 +67,8 @@ const TransactionSection = ({
   const handleSubmit = event => {
     event.preventDefault();
     let updatedTransactions = [...transactions];
-    let convertedAmount = type === "income" ? amount : -Math.abs(amount);
+    let convertedAmount = type === "income" ? Math.abs(amount) : -Math.abs(amount);
+    console.log('convertedAmount',convertedAmount)
     const index = updatedTransactions.findIndex(e => e.id === parsed.id);
     updatedTransactions[index] = {
       date: date,
@@ -76,13 +77,6 @@ const TransactionSection = ({
       amount: convertedAmount,
       id: parsed.id
     };
-    // newTransactions.push({
-    //   date: date,
-    //   description: description,
-    //   category: category,
-    //   amount: convertedAmount,
-    //   id: uuidv1()
-    // });
 
     let newBalance = balance;
     newBalance += convertedAmount - initialBalance;
@@ -114,8 +108,9 @@ const TransactionSection = ({
             <Grid item xs={12} sm={6} md={4}>
               <label htmlFor="type">Type</label>
               <select value={type} onChange={e => setType(e.target.value)}>
-                <option value="income">Income</option>
                 <option value="expense">Expense</option>
+                <option value="income">Income</option>
+
               </select>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>

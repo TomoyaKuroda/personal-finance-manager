@@ -8,14 +8,14 @@ handler.use(middleware);
 handler.get((req, res) => {
   if (req.user) {
     const {
-      name, email, bio, profilePicture, emailVerified, balance, transactions
+      name, email, bio, profilePicture, emailVerified, balance, transactions, netIncome
     } = req.user;
     return res.status(200).send({
       status: 'ok',
       data: {
         isLoggedIn: true,
         user: {
-          name, email, bio, profilePicture, emailVerified, balance, transactions
+          name, email, bio, profilePicture, emailVerified, balance, transactions, netIncome
         },
       },
     });

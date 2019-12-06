@@ -1,16 +1,21 @@
-import React, { useEffect, useState, useContext } from 'react'
-import Link from 'next/link'
-import Head from '../components/head'
-import Nav from '../components/nav'
-import { UserContext } from '../components/UserContext';
-import Layout from '../components/layout';
+import React, { useEffect, useState, useContext } from "react";
+import Link from "next/link";
+import Head from "../components/head";
+import Nav from "../components/nav";
+import { UserContext } from "../components/UserContext";
+import Layout from "../components/layout";
 
 const Home = () => {
   const [date, setDate] = useState(null);
-  const { state: { isLoggedIn, user: { name } } } = useContext(UserContext);
+  const {
+    state: {
+      isLoggedIn,
+      user: { name }
+    }
+  } = useContext(UserContext);
   useEffect(() => {
     async function getDate() {
-      const res = await fetch('/api/date');
+      const res = await fetch("/api/date");
       const newDate = await res.json();
       setDate(newDate);
     }
@@ -19,23 +24,13 @@ const Home = () => {
 
   return (
     <Layout title="Home">
-      {/* <Head title="Home" />
-      <Nav /> */}
 
-      {/* <h2>
-          Hello,
-          {' '}
-          {(isLoggedIn ? name : 'stranger')}
-          !
-        </h2> */}
 
       <div className="hero">
         <h1 className="title">Personal Finance Manager</h1>
         <p className="description">
           We are here to help you manage your finance.
         </p>
-
-
 
         {/* <div className='row'>
           <Link href='https://github.com/zeit/next.js#setup'>
@@ -60,9 +55,18 @@ const Home = () => {
       </div>
 
       <style jsx>{`
+        body:{
+          height: 100%;
+        }
         .hero {
-          width: 100%;
+          width: 100vw;
+          
+          
           color: #333;
+          height:100vh;
+          background:linear-gradient(rgba(53,82,66,0.5), rgba(47,80,63,0.6)), url('../static/background image.jpg') center no-repeat;
+          background-size:cover;
+          overflow-x: hidden;
         }
         .title {
           margin: 0;
@@ -70,10 +74,14 @@ const Home = () => {
           padding-top: 80px;
           line-height: 1.15;
           font-size: 48px;
+          color:white
         }
         .title,
         .description {
           text-align: center;
+        }
+        .description{
+          color:white
         }
         .row {
           max-width: 880px;
@@ -141,7 +149,7 @@ const Home = () => {
         }
       `}</style>
     </Layout>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
