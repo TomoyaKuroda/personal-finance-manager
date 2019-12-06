@@ -60,18 +60,17 @@ const ProfilePage = () => {
         Email
         <p>{ email }</p>
         {' '}
-        {!emailVerified ? (
+        {/* {!emailVerified ? (
           <span>
           (Not verified.
             {' '}
             <button type="button" onClick={sendVerificationEmail} style={{ display: 'inline-block', padding: '.4rem .2rem', margin: 0 }}>Send verification email</button>
           )
           </span>
-        ) : null}
+        ) : null} */}
       </div>
-      <Link href="/management"><button type="button">Management</button></Link>
 
-      <Link href="/profile/settings"><button type="button">Edit</button></Link>
+      <Link href="/profile/settings"><button type="button">Update Profile</button></Link>
     </Layout>
   );
 };
