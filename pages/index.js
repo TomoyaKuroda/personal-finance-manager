@@ -30,6 +30,8 @@ const Home = () => {
           We are here to help you manage your finance.
         </p>
 
+        <img src="../static/sample.png" alt="Sample" className="center"/> 
+
         {/* <div className='row'>
           <Link href='https://github.com/zeit/next.js#setup'>
             <a className='card'>
@@ -64,7 +66,7 @@ const Home = () => {
           width: 100%;
           padding-top: 80px;
           line-height: 1.15;
-          font-size: 48px;
+          font-size: 2rem;
           color:#333
         }
         .title,
@@ -72,7 +74,8 @@ const Home = () => {
           text-align: center;
         }
         .description{
-          color:#333
+          color:#333;
+          font-size:0.8rem;
         }
         .row {
           max-width: 880px;
@@ -138,6 +141,13 @@ const Home = () => {
           color: #888;
           font-size: 0.8rem;
         }
+
+        .center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
       `}</style>
     </Layout>
   );
