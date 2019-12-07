@@ -1,28 +1,13 @@
 import React, { useContext, useState } from "react";
 import axioswal from "axioswal";
 import NumberFormat from "react-number-format";
-import TextField from "@material-ui/core/TextField";
 import { UserContext } from "../../components/UserContext";
 import Layout from "../../components/layout";
-import redirectTo from "../../lib/redirectTo";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import EditIcon from "@material-ui/icons/Edit";
-import { IconButton, MenuItem } from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
+import redirectTo from "../../lib/redirectTo";
 const queryString = require("query-string");
-const uuidv1 = require("uuid/v1");
 const TransactionSection = ({
-  user: { transactions: initialTransactions, balance: initialBalance },
+  user: { transactions: initialTransactions, balance: initialBalance, netIncome: initialNetIncome },
   dispatch
 }) => {
   function createData(date, description, category, amount) {
@@ -31,7 +16,9 @@ const TransactionSection = ({
 
   initialTransactions = initialTransactions ? initialTransactions : [];
   const parsed = queryString.parse(location.search);
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const [transactions,setTransactions] = useState(initialTransactions);
+  const [netIncome,setNetIncome] = useState(initialTransactions);
+
 
   // Validation for wrong transaction id
   if (!transactions.filter(transaction => transaction.id === parsed.id)[0])
@@ -41,7 +28,7 @@ const TransactionSection = ({
     transaction => transaction.id === parsed.id
   )[0];
   console.log(transaction);
-  const [balance, setBalance] = useState(initialBalance);
+  const [balance] = useState(initialBalance);
   const [date, setDate] = useState(transaction.date);
   const [description, setDescription] = useState(transaction.description);
   const [category, setCategory] = useState(transaction.category);
@@ -81,13 +68,31 @@ const TransactionSection = ({
     let newBalance = balance;
     newBalance += convertedAmount - initialBalance;
 
+    // net income {month: value, netIncome: value}
+    let convertedNetIncome = [...netIncome] || [];
+    let year = date.substring(0,4)
+    let month = date.substring(5,7)
+    let convertedMonth = `${year}-${month}` 
+
+    const netIncomeIndex = convertedNetIncome.findIndex(e => e.month === convertedMonth);
+    if (netIncomeIndex === -1) {
+      convertedNetIncome.push({
+        month: convertedMonth,
+        netIncome: Number(convertedAmount)
+      });
+    } else {
+      convertedNetIncome[netIncomeIndex].netIncome = Number(convertedAmount) - convertedNetIncome[netIncomeIndex].netIncome;
+    }
+
     axioswal
       .patch("/api/user/transactions", {
         transactions: updatedTransactions,
-        balance: newBalance
+        balance: newBalance,
+        netIncome:convertedNetIncome
       })
       .then(() => {
         dispatch({ type: "fetch" });
+        redirectTo(`/management`);
       });
   };
 
@@ -131,7 +136,7 @@ const TransactionSection = ({
                 thousandSeparator={true}
                 prefix={"$"}
                 onValueChange={values => {
-                  const { formattedValue, value } = values;
+                  const { value } = values;
                   setAmount(Number(value));
                 }}
               />

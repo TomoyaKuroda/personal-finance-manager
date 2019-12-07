@@ -1,62 +1,36 @@
 import React, { useContext, useState } from "react";
 import axioswal from "axioswal";
 import NumberFormat from "react-number-format";
-import TextField from "@material-ui/core/TextField";
 import { UserContext } from "../../components/UserContext";
 import Layout from "../../components/layout";
-import redirectTo from "../../lib/redirectTo";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import EditIcon from "@material-ui/icons/Edit";
-import { IconButton, MenuItem } from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 const uuidv1 = require("uuid/v1");
 const TransactionSection = ({
-  user: { transactions: initialTransactions, balance: initialBalance, netIncome: initialNetIncome },
+  user: {
+    transactions: initialTransactions,
+    balance: initialBalance,
+    netIncome: initialNetIncome
+  },
   dispatch
 }) => {
-  function createData(date, description, category, amount) {
-    return { date, description, category, amount };
-  }
+
 
   // initialTransactions = initialTransactions ? initialTransactions : [];
 
-  const [transactions, setTransactions] = useState(initialTransactions||[]);
+  const [transactions, setTransactions] = useState(initialTransactions || []);
   const [balance, setBalance] = useState(initialBalance);
-  const [netIncome, setNetIncome] = useState(initialNetIncome||[])
+  const [netIncome, setNetIncome] = useState(initialNetIncome || []);
   const [date, setDate] = useState(new Date());
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
 
-  // let rows = [];
-  // for (let transaction of transactions) {
-  //   let convertedAmount =
-  //     type === "income" ? Math.abs(transaction.amount) : -Math.abs(transaction.amount);
-  //   rows.push(
-  //     createData(
-  //       transaction.date,
-  //       transaction.description,
-  //       transaction.category,
-  //       convertedAmount
-  //     )
-  //   );
-  // }
-
   const handleSubmit = event => {
     event.preventDefault();
     let newTransactions = [...transactions];
-    let convertedAmount = type === "income" ? Math.abs(amount) : -Math.abs(amount);
+    let convertedAmount =
+      type === "income" ? Math.abs(amount) : -Math.abs(amount);
     console.log("convertedAmount", convertedAmount);
     newTransactions.push({
       date: date,
@@ -69,20 +43,21 @@ const TransactionSection = ({
     let newBalance = balance;
     newBalance += convertedAmount;
 
-    // net income {month: $$, amount: $$}
-    let convertedNetIncome = [...netIncome] || []
-    let convertedDate = new Date(date)
-    let month = new Date(convertedDate.getFullYear(), convertedDate.getMonth(), 1).toISOString().substring(0,10)
-    // let currentNetIncome = convertedNetIncome[keyDate] ? convertedNetIncome[keyDate] : 0
-
-    const index = convertedNetIncome.findIndex(e=>e.month===month)
+    // net income {month: value, netIncome: value}
+    let convertedNetIncome = [...netIncome] || [];
+    let year = date.substring(0,4)
+    let month = date.substring(5,7)
+    let convertedMonth = `${year}-${month}` 
+    const index = convertedNetIncome.findIndex(e => e.month == convertedMonth);
     if (index === -1) {
-      convertedNetIncome.push({month:month, netIncome: Number(convertedAmount)});
-  } else {
-    convertedNetIncome[index].netIncome += Number(convertedAmount);
-  }
+      convertedNetIncome.push({
+        month: convertedMonth,
+        netIncome: Number(convertedAmount)
+      });
+    } else {
+      convertedNetIncome[index].netIncome += Number(convertedAmount);
+    }
 
-    // convertedNetIncome[keyDate] = currentNetIncome + Number(convertedAmount)
 
     axioswal
       .patch("/api/user/transactions", {
@@ -93,6 +68,17 @@ const TransactionSection = ({
       .then(() => {
         dispatch({ type: "fetch" });
       });
+
+      console.log('newTransactions',newTransactions)
+      setTransactions(newTransactions)
+      setBalance(newBalance)
+      setNetIncome(convertedNetIncome)
+      setDate(new Date())
+      setType('expense')
+      setAmount('')
+      setCategory('')
+      setDescription('')
+
   };
 
   return (
@@ -105,82 +91,6 @@ const TransactionSection = ({
         `}
       </style>
       <section>
-        {/* <Card>
-          <CardContent>
-            <Typography color="textSecondary" gutterBottom>
-              Word of the Day
-            </Typography>
-            <Typography variant="h5" component="h2">
-              be nev lent
-            </Typography>
-            <Typography color="textSecondary">adjective</Typography>
-            <Typography variant="body2" component="p">
-              well meaning and kindly.
-              <br />
-              {'"a benevolent smile"'}
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button size="small">Learn More</Button>
-          </CardActions>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <Typography color="textSecondary" gutterBottom>
-              Word of the Day
-            </Typography>
-            <Typography variant="h5" component="h2">
-              be nev lent
-            </Typography>
-            <Typography color="textSecondary">adjective</Typography>
-            <Typography variant="body2" component="p">
-              well meaning and kindly.
-              <br />
-              {'"a benevolent smile"'}
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button size="small">Learn More</Button>
-          </CardActions>
-        </Card>
-        <Paper>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell align="right">Category</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell align="right">Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell component="th" scope="row">
-                    {row.date}
-                  </TableCell>
-                  <TableCell>{row.description}</TableCell>
-                  <TableCell align="right">{row.category}</TableCell>
-                  <TableCell align="right">{row.amount}</TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      style={{ boxShadow: "initial" }}
-                      size="small"
-                      onClick={() => alert("hehe")}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper> */}
-
-        {/* <h2>${balance}</h2> */}
-
         <h2>Add new transaction</h2>
 
         <form onSubmit={handleSubmit}>
@@ -190,12 +100,12 @@ const TransactionSection = ({
               <select value={type} onChange={e => setType(e.target.value)}>
                 <option value="expense">Expense</option>
                 <option value="income">Income</option>
-
               </select>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <label htmlFor="date">Date</label>
               <input
+              required
                 id="date"
                 type="date"
                 value={date}
@@ -205,6 +115,7 @@ const TransactionSection = ({
             <Grid item xs={12} sm={6} md={4}>
               <label htmlFor="amount">Amount</label>
               <NumberFormat
+              required
                 id="amount"
                 allowNegative={false}
                 value={amount}
@@ -216,18 +127,20 @@ const TransactionSection = ({
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} >
+            <Grid item xs={12} sm={6}>
               <label htmlFor="description">Description</label>
               <input
+              required
                 id="description"
                 type="text"
                 value={description}
                 onChange={e => setDescription(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={6} >
+            <Grid item xs={12} sm={6}>
               <label htmlFor="category">Category</label>
               <input
+              required
                 id="category"
                 type="text"
                 value={category}

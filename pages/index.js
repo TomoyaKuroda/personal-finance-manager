@@ -24,8 +24,6 @@ const Home = () => {
 
   return (
     <Layout title="Home">
-
-
       <div className="hero">
         <h1 className="title">Personal Finance Manager</h1>
         <p className="description">
@@ -59,14 +57,7 @@ const Home = () => {
           height: 100%;
         }
         .hero {
-          width: 100vw;
-          
-          
           color: #333;
-          height:100vh;
-          background:linear-gradient(rgba(53,82,66,0.5), rgba(47,80,63,0.6)), url('../static/background image.jpg') center no-repeat;
-          background-size:cover;
-          overflow-x: hidden;
         }
         .title {
           margin: 0;
@@ -74,14 +65,14 @@ const Home = () => {
           padding-top: 80px;
           line-height: 1.15;
           font-size: 48px;
-          color:white
+          color:#333
         }
         .title,
         .description {
           text-align: center;
         }
         .description{
-          color:white
+          color:#333
         }
         .row {
           max-width: 880px;

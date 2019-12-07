@@ -39,13 +39,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 const ManagementSection = ({
-  user: { transactions: initialTransactions, balance: initialBalance },
+  user: { transactions: initialTransactions, balance: initialBalance, netIncome:initialNetIncome },
   dispatch
 }) => {
   const classes = useStyles();
   const [transactions, setTransactions] = useState(initialTransactions||[]);
-  const [balance, setBalance] = useState(initialBalance);
+  const [balance, setBalance] = useState(initialBalance||0);
+  const [netIncome,setNetIncome] = useState(initialNetIncome || [])
 
+  let netIncomeThisMonth = [...netIncome]
+  let today = new Date()
+  let firstDay = new Date(today.getFullYear(),today.getMonth(),1).toISOString().substring(0,7)
+  let filteredNetIncome = 0
+  if(Array.isArray(netIncomeThisMonth) && netIncomeThisMonth.length && netIncomeThisMonth.filter(item=>item.month===firstDay)[0] !==undefined){
+  filteredNetIncome = netIncomeThisMonth.filter(item=>item.month===firstDay)[0].netIncome
+  }
   //Menu
   const MenuButton = ({ transaction }) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -68,10 +76,20 @@ const ManagementSection = ({
         return prevBalance - transaction.amount;
       });
 
+      let newNetIncome = [...netIncome]
+      let year = transaction.date.substring(0,4)
+      let month = transaction.date.substring(5,7)
+      let convertedMonth = `${year}-${month}`
+
+      const index = newNetIncome.findIndex(e => e.month == convertedMonth);
+      newNetIncome[index].netIncome = newNetIncome[index].netIncome - transaction.amount;
+      
+
       axioswal
         .patch("/api/user/transactions", {
           transactions: filteredAry,
-          balance: newBalance
+          balance: newBalance,
+          netIncome:newNetIncome
         })
         .then(() => {
           dispatch({ type: "fetch" });
@@ -182,7 +200,7 @@ const ManagementSection = ({
           <h2>This month's net income</h2>
           <h3>
             <NumberFormat
-              value={balance}
+              value={filteredNetIncome}
               displayType={"text"}
               thousandSeparator={true}
               prefix={"$"}
