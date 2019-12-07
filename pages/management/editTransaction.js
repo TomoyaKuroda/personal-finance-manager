@@ -6,6 +6,7 @@ import Layout from "../../components/layout";
 import Grid from "@material-ui/core/Grid";
 import redirectTo from "../../lib/redirectTo";
 const queryString = require("query-string");
+import { useRouter } from 'next/router'
 const TransactionSection = ({
   user: { transactions: initialTransactions, balance: initialBalance, netIncome: initialNetIncome },
   dispatch
@@ -13,7 +14,7 @@ const TransactionSection = ({
   function createData(date, description, category, amount) {
     return { date, description, category, amount };
   }
-
+  const router = useRouter()
   initialTransactions = initialTransactions ? initialTransactions : [];
   const parsed = queryString.parse(location.search);
   const [transactions,setTransactions] = useState(initialTransactions);
@@ -28,7 +29,7 @@ const TransactionSection = ({
     transaction => transaction.id === parsed.id
   )[0];
   console.log(transaction);
-  const [balance] = useState(initialBalance);
+  const [balance, setBalance] = useState(initialBalance);
   const [date, setDate] = useState(transaction.date);
   const [description, setDescription] = useState(transaction.description);
   const [category, setCategory] = useState(transaction.category);
@@ -84,6 +85,9 @@ const TransactionSection = ({
       convertedNetIncome[netIncomeIndex].netIncome = Number(convertedAmount) - convertedNetIncome[netIncomeIndex].netIncome;
     }
 
+    setNetIncome(convertedNetIncome)
+    setTransactions(updatedTransactions)
+    setBalance(newBalance)
     axioswal
       .patch("/api/user/transactions", {
         transactions: updatedTransactions,
@@ -92,8 +96,13 @@ const TransactionSection = ({
       })
       .then(() => {
         dispatch({ type: "fetch" });
-        redirectTo(`/management`);
-      });
+      })
+      // .then(()=>{
+      //   router.prefetch('/management')
+      // })
+      // .then(()=>{
+      //   router.push('/management')
+      // })
   };
 
   return (

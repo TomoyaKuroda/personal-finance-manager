@@ -258,6 +258,8 @@ const ManagementPage = () => {
     state: { isLoggedIn, user },
     dispatch
   } = useContext(UserContext);
+
+
   if (!isLoggedIn)
     return (
       <Layout>
