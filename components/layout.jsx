@@ -152,7 +152,7 @@ export default ({ children, title }) => {
               </>
             ) : (
               <>
-                <Link href="/profile"><a>Profile</a></Link>
+                {/* <Link href="/profile"><a>Profile</a></Link> */}
                 {/* eslint-disable-next-line */}
                 <Link href="/"><a role="button" onClick={handleLogout}>Logout</a></Link>
             
