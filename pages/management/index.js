@@ -8,7 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import loadable from "loadable-components";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import { Typography } from "@material-ui/core";
+import { Typography, Button } from "@material-ui/core";
 import List from "@material-ui/core/List";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -36,23 +36,66 @@ const useStyles = makeStyles(theme => ({
     float: "left",
     margin: 0,
     fontSize: "0.8em"
+  },
+  monthlyButton:{
+    backgroundColor:'white',
+    height:'1.5rem',
   }
 }));
 const ManagementSection = ({
-  user: { transactions: initialTransactions, balance: initialBalance, netIncome:initialNetIncome },
+  user: {
+    transactions: initialTransactions,
+    balance: initialBalance,
+    netIncome: initialNetIncome
+  },
   dispatch
 }) => {
   const classes = useStyles();
-  const [transactions, setTransactions] = useState(initialTransactions||[]);
-  const [balance, setBalance] = useState(initialBalance||0);
-  const [netIncome,setNetIncome] = useState(initialNetIncome || [])
+  const [transactions, setTransactions] = useState(initialTransactions || []);
+  const [balance, setBalance] = useState(initialBalance || 0);
+  const [netIncome, setNetIncome] = useState(initialNetIncome || []);
 
-  let netIncomeThisMonth = [...netIncome]
-  let today = new Date()
-  let firstDay = new Date(today.getFullYear(),today.getMonth(),1).toISOString().substring(0,7)
-  let filteredNetIncome = 0
-  if(Array.isArray(netIncomeThisMonth) && netIncomeThisMonth.length && netIncomeThisMonth.filter(item=>item.month===firstDay)[0] !==undefined){
-  filteredNetIncome = netIncomeThisMonth.filter(item=>item.month===firstDay)[0].netIncome
+  // Transaction Button
+  const [transactionAnchorEl, setTransactionAnchorEl] = React.useState(null);
+  const handleTransactionClick = event => {
+    setTransactionAnchorEl(event.currentTarget);
+  };
+  const handleTransactionClose = () => {
+    setTransactionAnchorEl(null);
+  };
+
+
+  let netIncomeThisMonth = [...netIncome];
+  let today = new Date();
+  let firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
+    .toISOString()
+    .substring(0, 7);
+  let filteredNetIncome = 0;
+  if (
+    Array.isArray(netIncomeThisMonth) &&
+    netIncomeThisMonth.length &&
+    netIncomeThisMonth.filter(item => item.month === firstDay)[0] !== undefined
+  ) {
+    filteredNetIncome = netIncomeThisMonth.filter(
+      item => item.month === firstDay
+    )[0].netIncome;
+  }
+
+  //Month Transaction
+  let thisMonth = new Date()
+  function pad(number) {
+    if (number < 10) {
+      return '0' + number;
+    }
+    return number;
+  }
+  const [monthlyTransactions, setMonthlyTransactions] = useState(`${thisMonth.getFullYear()}-${pad(thisMonth.getMonth()+1)}`);
+
+
+
+  const updateMonthlyTransactions = event =>{
+    handleTransactionClose()
+    setMonthlyTransactions(event.target.textContent)
   }
   //Menu
   const MenuButton = ({ transaction }) => {
@@ -76,20 +119,20 @@ const ManagementSection = ({
         return prevBalance - transaction.amount;
       });
 
-      let newNetIncome = [...netIncome]
-      let year = transaction.date.substring(0,4)
-      let month = transaction.date.substring(5,7)
-      let convertedMonth = `${year}-${month}`
+      let newNetIncome = [...netIncome];
+      let year = transaction.date.substring(0, 4);
+      let month = transaction.date.substring(5, 7);
+      let convertedMonth = `${year}-${month}`;
 
       const index = newNetIncome.findIndex(e => e.month == convertedMonth);
-      newNetIncome[index].netIncome = newNetIncome[index].netIncome - transaction.amount;
-      
+      newNetIncome[index].netIncome =
+        newNetIncome[index].netIncome - transaction.amount;
 
       axioswal
         .patch("/api/user/transactions", {
           transactions: filteredAry,
           balance: newBalance,
-          netIncome:newNetIncome
+          netIncome: newNetIncome
         })
         .then(() => {
           dispatch({ type: "fetch" });
@@ -185,6 +228,12 @@ const ManagementSection = ({
 
   return (
     <>
+            <Grid
+      justify="space-between" // Add it here :)
+      container 
+      spacing={24}
+    >
+            <Grid item>
       <p className={classes.p}>
         Total balance:{" "}
         <NumberFormat
@@ -194,10 +243,52 @@ const ManagementSection = ({
           prefix={"$"}
         />{" "}
         <Link href="/management/balance">Update Balance</Link>
-      </p>
+        </p>
+</Grid>
+      <Grid item>
+<span 
+>
+        <Button
+              aria-controls="simple-menu"
+              aria-haspopup="true"
+              onClick={handleTransactionClick}
+              className={classes.monthlyButton}
+            >
+              {monthlyTransactions}
+            </Button>
+            </span>
+            </Grid>
+            </Grid>
+
+            <Menu
+            id="simple-menu"
+            anchorEl={transactionAnchorEl}
+            keepMounted
+            open={Boolean(transactionAnchorEl)}
+            onClose={handleTransactionClose}
+            PaperProps={{
+              style: {
+                maxHeight: 200,
+                width: 200
+              }
+            }}
+          >
+            {netIncome.map(value => {
+              console.log("item", value);
+              return (
+                <MenuItem onClick={updateMonthlyTransactions} value={value.month}>
+                  {value.month}
+                </MenuItem>
+              );
+            })}
+          </Menu>
+
+            {/* </Grid>
+            </Grid> */}
+      {/* </p> */}
       <Grid container>
         <Grid item xs={12} sm={6}>
-          <h2>This month's net income</h2>
+          <h2>Monthly net income</h2>
           <h3>
             <NumberFormat
               value={filteredNetIncome}
@@ -212,13 +303,18 @@ const ManagementSection = ({
           </Grid>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <h2>This month's transactions</h2>
+          <h2>
+            Monthly transactions{" "}
+          </h2>
+
+
+
           <List className={classes.root}>
             {transactions.map(transaction => (
               <MenuButton transaction={transaction} key={transaction.id} />
             ))}
           </List>
-          <Link href="/management/transaction">
+          <Link href="/management/addTransaction">
             <button type="button">Add Transaction</button>
           </Link>
         </Grid>
@@ -258,7 +354,6 @@ const ManagementPage = () => {
     state: { isLoggedIn, user },
     dispatch
   } = useContext(UserContext);
-
 
   if (!isLoggedIn)
     return (
