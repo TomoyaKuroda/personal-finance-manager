@@ -4,7 +4,11 @@ import NumberFormat from "react-number-format";
 import { UserContext } from "../../components/UserContext";
 import Layout from "../../components/layout";
 import Grid from "@material-ui/core/Grid";
+import { useRouter } from "next/router";
+import redirectTo from "../../lib/redirectTo";
+const queryString = require("query-string");
 const uuidv1 = require("uuid/v1");
+
 const TransactionSection = ({
   user: {
     transactions: initialTransactions,
@@ -13,51 +17,90 @@ const TransactionSection = ({
   },
   dispatch
 }) => {
-
-
-  // initialTransactions = initialTransactions ? initialTransactions : [];
-
+  const router = useRouter();
+  const parsed = queryString.parse(location.search);
   const [transactions, setTransactions] = useState(initialTransactions || []);
-  const [balance, setBalance] = useState(initialBalance);
   const [netIncome, setNetIncome] = useState(initialNetIncome || []);
-  const [date, setDate] = useState(new Date());
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [amount, setAmount] = useState("");
-  const [type, setType] = useState("expense");
+
+  // Validation for wrong transaction id
+  if (
+    parsed.id !== undefined &&
+    !transactions.filter(transaction => transaction.id === parsed.id)[0]
+  ) {
+    router.push("/management");
+    return <p></p>;
+  }
+
+  // queried transaction
+  let transaction =
+    transactions.filter(transaction => transaction.id === parsed.id)[0] || {};
+  const [balance, setBalance] = useState(initialBalance || 0);
+  const [date, setDate] = useState(transaction.date || new Date());
+  const [description, setDescription] = useState(transaction.description || "");
+  const [category, setCategory] = useState(transaction.category || "");
+  const [amount, setAmount] = useState(transaction.amount || "");
+  let initialType = transaction.amount
+    ? transaction.amount > 0
+      ? "income"
+      : "expense"
+    : "expense";
+  const [type, setType] = useState(initialType);
 
   const handleSubmit = event => {
     event.preventDefault();
     let newTransactions = [...transactions];
     let convertedAmount =
       type === "income" ? Math.abs(amount) : -Math.abs(amount);
-    console.log("convertedAmount", convertedAmount);
-    newTransactions.push({
-      date: date,
-      description: description,
-      category: category,
-      amount: convertedAmount,
-      id: uuidv1()
-    });
 
-    let newBalance = balance;
-    newBalance += convertedAmount;
+
+
+      let newBalance = Number(balance);
+    if (parsed.id !== undefined) {
+      const index = newTransactions.findIndex(e => e.id === parsed.id);
+      newTransactions[index] = {
+        date: date,
+        description: description,
+        category: category,
+        amount: convertedAmount,
+        id: parsed.id
+      };
+
+      newBalance += convertedAmount - transaction.amount;
+    } else {
+      newTransactions.push({
+        date: date,
+        description: description,
+        category: category,
+        amount: convertedAmount,
+        id: uuidv1()
+      });
+      newBalance += convertedAmount;
+    }
+
+ 
 
     // net income {month: value, netIncome: value}
     let convertedNetIncome = [...netIncome] || [];
-    let year = date.substring(0,4)
-    let month = date.substring(5,7)
-    let convertedMonth = `${year}-${month}` 
-    const index = convertedNetIncome.findIndex(e => e.month == convertedMonth);
-    if (index === -1) {
+    let year = date.substring(0, 4);
+    let month = date.substring(5, 7);
+    let convertedMonth = `${year}-${month}`;
+
+    const netIncomeIndex = convertedNetIncome.findIndex(
+      e => e.month === convertedMonth
+    );
+    if (netIncomeIndex === -1) {
       convertedNetIncome.push({
         month: convertedMonth,
         netIncome: Number(convertedAmount)
       });
     } else {
-      convertedNetIncome[index].netIncome += Number(convertedAmount);
+      parsed.id !== undefined
+        ? (convertedNetIncome[netIncomeIndex].netIncome +=
+            Number(convertedAmount) - transaction.amount)
+        : (convertedNetIncome[netIncomeIndex].netIncome += Number(
+            convertedAmount
+          ));
     }
-
 
     axioswal
       .patch("/api/user/transactions", {
@@ -68,17 +111,14 @@ const TransactionSection = ({
       .then(() => {
         dispatch({ type: "fetch" });
       });
-
-      console.log('newTransactions',newTransactions)
-      setTransactions(newTransactions)
-      setBalance(newBalance)
-      setNetIncome(convertedNetIncome)
-      setDate(new Date())
-      setType('expense')
-      setAmount('')
-      setCategory('')
-      setDescription('')
-
+    setBalance(newBalance);
+    setNetIncome(convertedNetIncome);
+    setTransactions(newTransactions);
+    setDate(new Date());
+    setType("expense");
+    setAmount("");
+    setCategory("");
+    setDescription("");
   };
 
   return (
@@ -91,7 +131,7 @@ const TransactionSection = ({
         `}
       </style>
       <section>
-        <h2>Add new transaction</h2>
+        <h2>Update transaction</h2>
 
         <form onSubmit={handleSubmit}>
           <Grid container spacing={1}>
@@ -105,46 +145,46 @@ const TransactionSection = ({
             <Grid item xs={12} sm={6} md={4}>
               <label htmlFor="date">Date</label>
               <input
-              required
                 id="date"
                 type="date"
                 value={date}
                 onChange={e => setDate(e.target.value)}
+                required
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <label htmlFor="amount">Amount</label>
               <NumberFormat
-              required
                 id="amount"
                 allowNegative={false}
                 value={amount}
                 thousandSeparator={true}
                 prefix={"$"}
                 onValueChange={values => {
-                  const { formattedValue, value } = values;
+                  const { value } = values;
                   setAmount(Number(value));
                 }}
+                required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <label htmlFor="description">Description</label>
               <input
-              required
                 id="description"
                 type="text"
                 value={description}
                 onChange={e => setDescription(e.target.value)}
+                required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <label htmlFor="category">Category</label>
               <input
-              required
                 id="category"
                 type="text"
                 value={category}
                 onChange={e => setCategory(e.target.value)}
+                required
               />
             </Grid>
 
@@ -162,6 +202,7 @@ const TransactionPage = () => {
     state: { isLoggedIn, user },
     dispatch
   } = useContext(UserContext);
+
   if (!isLoggedIn)
     return (
       <Layout>

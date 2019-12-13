@@ -64,23 +64,6 @@ const ManagementSection = ({
     setTransactionAnchorEl(null);
   };
 
-
-  let netIncomeThisMonth = [...netIncome];
-  let today = new Date();
-  let firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
-    .toISOString()
-    .substring(0, 7);
-  let filteredNetIncome = 0;
-  if (
-    Array.isArray(netIncomeThisMonth) &&
-    netIncomeThisMonth.length &&
-    netIncomeThisMonth.filter(item => item.month === firstDay)[0] !== undefined
-  ) {
-    filteredNetIncome = netIncomeThisMonth.filter(
-      item => item.month === firstDay
-    )[0].netIncome;
-  }
-
   //Month Transaction
   let thisMonth = new Date()
   function pad(number) {
@@ -89,13 +72,34 @@ const ManagementSection = ({
     }
     return number;
   }
-  const [monthlyTransactions, setMonthlyTransactions] = useState(`${thisMonth.getFullYear()}-${pad(thisMonth.getMonth()+1)}`);
+  const [month, setMonth] = useState(`${thisMonth.getFullYear()}-${pad(thisMonth.getMonth()+1)}`);
 
 
 
-  const updateMonthlyTransactions = event =>{
+  // net income
+  let netIncomeThisMonth = [...netIncome];
+  let filteredNetIncome = 0;
+  if (
+    Array.isArray(netIncomeThisMonth) &&
+    netIncomeThisMonth.length &&
+    netIncomeThisMonth.filter(item => item.month === month)[0] !== undefined
+  ) {
+    filteredNetIncome = netIncomeThisMonth.filter(
+      item => item.month === month
+    )[0].netIncome;
+  }
+
+
+  let monthlyTransactions = [...transactions]
+  if (transactions.length) {
+    monthlyTransactions = transactions.filter(item=>item.date.substring(0,7) === month)
+  }
+
+
+//Update Month
+  const updateMonth = event =>{
     handleTransactionClose()
-    setMonthlyTransactions(event.target.textContent)
+    setMonth(event.target.textContent)
   }
   //Menu
   const MenuButton = ({ transaction }) => {
@@ -141,7 +145,7 @@ const ManagementSection = ({
     };
 
     const editTransaction = transaction => {
-      redirectTo(`/management/editTransaction?id=${transaction.id}`);
+      redirectTo(`/management/transaction?id=${transaction.id}`);
     };
     return (
       <Fragment key={transaction.id}>
@@ -218,8 +222,8 @@ const ManagementSection = ({
 
   let income = 0,
     expense = 0;
-  if (transactions)
-    for (let transaction of transactions) {
+  if (monthlyTransactions)
+    for (let transaction of monthlyTransactions) {
       let amount = Number(transaction.amount);
       if (amount > 0) income += amount;
       else expense += Math.abs(amount);
@@ -254,7 +258,7 @@ const ManagementSection = ({
               onClick={handleTransactionClick}
               className={classes.monthlyButton}
             >
-              {monthlyTransactions}
+              {month}
             </Button>
             </span>
             </Grid>
@@ -273,19 +277,22 @@ const ManagementSection = ({
               }
             }}
           >
-            {netIncome.map(value => {
-              console.log("item", value);
+            {
+            netIncome.length ?
+            netIncome.map(value => {
               return (
-                <MenuItem onClick={updateMonthlyTransactions} value={value.month}>
+                <MenuItem onClick={updateMonth} value={value.month}>
                   {value.month}
                 </MenuItem>
               );
-            })}
+            }) : 
+            <MenuItem onClick={updateMonth} value={month}>
+                  {month}
+                </MenuItem>
+            }
           </Menu>
 
-            {/* </Grid>
-            </Grid> */}
-      {/* </p> */}
+   
       <Grid container>
         <Grid item xs={12} sm={6}>
           <h2>Monthly net income</h2>
@@ -310,11 +317,11 @@ const ManagementSection = ({
 
 
           <List className={classes.root}>
-            {transactions.map(transaction => (
+            {monthlyTransactions.map(transaction => (
               <MenuButton transaction={transaction} key={transaction.id} />
             ))}
           </List>
-          <Link href="/management/addTransaction">
+          <Link href="/management/transaction">
             <button type="button">Add Transaction</button>
           </Link>
         </Grid>
