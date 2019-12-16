@@ -9,12 +9,12 @@ module.exports = {
     // SENDGRID_TEMPLATEID_EMAILVERIFY: process.env.SENDGRID_TEMPLATEID_EMAILVERIFY,
     // EMAIL_FROM: process.env.EMAIL_FROM,
   },
-  // webpack: config => {
-  //   // Fixes npm packages that depend on `fs` module
-  //   config.node = {
-  //     fs: 'empty'
-  //   }
+  webpack: config => {
+    // Fixes npm packages that depend on `fs` module
+    config.node = {
+      fs: 'empty'
+    }
 
-  //   return config
-  // }
+    return config
+  }
 }

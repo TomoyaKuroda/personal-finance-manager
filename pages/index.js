@@ -24,7 +24,32 @@ const Home = () => {
 
   return (
     <Layout title="Home">
-      <div className="hero">
+      <div id="home-container">
+        <div id="inner">
+          {/* <img src="../static/pfm1.png" alt="PFM logo" id="logo" height='200'/> */}
+          <h1 className="text-align-left">Personal Finance Manager</h1>
+          <p className="subtitle text-align-left">
+            Personal Finance Manager helps you manage your finance
+          </p>
+          <p className="text-align-left">
+            <a href="/signup" className="cta text-align-left">
+              Sign up
+            </a>
+          </p>
+        </div>
+
+        <div id="illustration">
+          {/* <img src="assets/dash.svg" alt="dash img" id="dash" className="crypto-icons"/>
+            <img src="assets/miota.svg" alt="iota img" id="iota" className="crypto-icons"/>
+            <img src="assets/eth.svg" alt="eth img" id="eth" className="crypto-icons"/> */}
+          <img
+            src="../static/mockup.png"
+            alt="monitor img"
+            id="monitor"
+            className="monitor"
+          />
+        </div>
+        {/* <div className="hero">
         <h1 className="title">Personal Finance Manager</h1>
         <p className="description">
           We are here to help you manage your finance.
@@ -57,6 +82,14 @@ const Home = () => {
       <style jsx>{`
         body:{
           height: 100%;
+        }
+        .monitor{
+          width: 100%;
+          max-width:400px;
+          height:auto;
+        }
+        .text-align-left{
+          text-align: left !important;
         }
         .hero {
           color: #333;
@@ -148,6 +181,142 @@ const Home = () => {
   margin-right: auto;
   max-width: 100%;
 }
+
+#home-container {
+    display: grid;
+    grid-template-columns: 10px 1fr 10px; /* for left and right sections */
+    grid-template-rows: 10px 1fr 1fr 10px;
+    grid-gap: 20px;
+    height: 70vh;
+}
+
+#inner {
+    grid-row: 2;
+    grid-column: 2;
+    align-self: center;
+    justify-self: center;
+}
+
+#illustration {
+    grid-row: 3;
+    grid-column: 2;
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    padding: 10px;
+}
+
+@media (min-width: 768px) {
+    #home-container {
+        grid-template-columns: 0fr 1.6fr 1fr 0fr;
+        grid-template-rows: 1fr;
+    }
+    #inner {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    #illustration {
+        grid-column: 3;
+        grid-row: 1;
+    }
+}
+
+img#logo{
+    width: 130px;
+    margin-bottom: 1.6em;
+}
+
+h1{
+    text-transform: uppercase;
+    color: #535353;
+    margin-bottom: .2em;
+}
+
+p.subtitle{
+    font-size: 1.4em;
+    color: #858585;
+    margin-top: 0;
+}
+
+.cta{
+    background-color: #09BBE9;
+    padding: 1em;
+    color: #fff;
+    font-weight: bold;
+    margin-top: 2em;
+    display: inline-block;
+    border-radius: 5px;
+    text-decoration: none;
+    /* TODO: add glowing type animation while on hover */
+}
+
+#monitor{
+    animation: monitorIn 1s ease-in-out forwards; /* assign animation to monitor with 'monitorIn' as keyframe name */
+    opacity: 0;
+}
+
+.crypto-icons{
+    position: absolute;
+    width: 12%;
+}
+
+#dash{
+    margin-top: -4%;
+    margin-left: 9%;
+    animation: chatblips .5s ease-in-out 2.7s forwards; /* assign animation to dash with 'chatblips' as keyframe name */
+    opacity: 0;
+    z-index: 2;
+}
+
+#eth{
+    margin-top: 9.5%;
+    margin-left: 18%;
+    animation: chatblips .5s ease-in-out 1.9s forwards; /* assign animation to eth with 'chatblips' as keyframe name */
+    opacity: 0;
+    z-index: 2;
+}
+
+#iota{
+    margin-top: 5%;
+    margin-left: -1.5%;
+    animation: chatblips .5s ease-in-out .8s forwards; /* assign animation to iota with 'chatblips' as keyframe name */
+    opacity: 0;
+    z-index: 2;
+}
+
+
+
+@keyframes monitorIn{
+    from{
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to{
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes chatblips{
+    /* taken from http://angrytools.com/css/animation/ for bounce-in animation*/
+    0%{
+        opacity: 0;
+        transform: scale(.3);
+      }
+      50%{
+        opacity: 1;
+        transform: scale(1.0);
+      }
+      70%{
+        transform: scale(0.9);
+      }
+      100%{
+        transform: scale(1);
+        opacity: 1;
+      }
+}
+
       `}</style>
     </Layout>
   );
