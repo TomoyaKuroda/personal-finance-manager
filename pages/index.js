@@ -32,9 +32,11 @@ const Home = () => {
             Personal Finance Manager helps you manage your finance
           </p>
           <p className="text-align-left">
-            <a href="/signup" className="cta text-align-left">
+            <Link href="/signup">
+              <a className="cta text-align-left">
               Sign up
-            </a>
+              </a>
+            </Link>
           </p>
         </div>
 
