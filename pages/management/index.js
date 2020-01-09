@@ -279,7 +279,7 @@ const ManagementSection = ({
           >
             {
             netIncome.length ?
-            netIncome.map(value => {
+            netIncome.sort((a, b) => a - b).map(value => {
               return (
                 <MenuItem onClick={updateMonth} value={value.month}>
                   {value.month}
@@ -304,23 +304,57 @@ const ManagementSection = ({
               prefix={"$"}
             />
           </h3>
+
+{ (series[0] || series[1]) ? 
+<>
+<h2>Income</h2>
+<h3>
+            <NumberFormat
+              value={series[0]}
+              displayType={"text"}
+              thousandSeparator={true}
+              prefix={"$"}
+            />
+          </h3>
+<h2>Expense</h2>
+          <h3>
+            <NumberFormat
+              value={series[1]}
+              displayType={"text"}
+              thousandSeparator={true}
+              prefix={"$"}
+            />
+          </h3>
+</> : null
+}
+ 
+
+          </Grid>
+          <Grid item xs={12} sm={6}>
           <h2>Income and Expense Chart</h2>
           <Grid container justify="center">
-            <Chart options={options} series={series} type="pie" width="380" />
+            {
+              series[0] || series[1] ?  <Chart options={options} series={series} type="pie" width="380" /> : <p>There is no transaction this month.</p>
+            }
+           
           </Grid>
-        </Grid>
-        <Grid item xs={12} sm={6}>
+</Grid>
+        <Grid item xs={12} sm={12}>
           <h2>
             Monthly transactions{" "}
           </h2>
 
+{
+  monthlyTransactions.length ? 
+  <List className={classes.root}>
+  {monthlyTransactions.map(transaction => (
+    <MenuButton transaction={transaction} key={transaction.id} />
+  ))}
+</List>
+: <p>There is no transaction this month</p>
+}
 
 
-          <List className={classes.root}>
-            {monthlyTransactions.map(transaction => (
-              <MenuButton transaction={transaction} key={transaction.id} />
-            ))}
-          </List>
           <Link href="/management/transaction">
             <button type="button">Add Transaction</button>
           </Link>

@@ -21,7 +21,7 @@ const SignupPage = () => {
       .then((data) => {
         if (data.status === 'ok') {
           dispatch({ type: 'fetch' });
-          redirectTo('/');
+          redirectTo('/management');
         }
       });
   };
