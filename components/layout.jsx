@@ -115,6 +115,17 @@ export default ({ children, title }) => {
             max-width: 1040px;
             margin: 0 auto;
           }
+          .main-wrapper {
+            background-image: linear-gradient(
+              to top,
+              #d5d4d0 0%,
+              #d5d4d0 1%,
+              #eeeeec 31%,
+              #efeeec 75%,
+              #e9e9e7 100%
+            );
+            min-height: calc(100vh - 67px);
+          }
           footer {
             font-size: 0.8rem;
             margin-top: 1rem;
@@ -184,8 +195,10 @@ export default ({ children, title }) => {
           </div>
         </nav>
       </header>
+      <div className="main-wrapper">
+        <main>{children}</main>
+      </div>
 
-      <main>{children}</main>
       {/* <footer>
       </footer> */}
     </>

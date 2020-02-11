@@ -26,7 +26,7 @@ const Home = () => {
   }, []);
 
   return (
-    <Layout title="Home">
+    <Layout title="Personal Finance Manager">
       <div id="home-container">
         <div id="inner">
           {/* <img src="../static/pfm1.png" alt="PFM logo" id="logo" height='200'/> */}
@@ -58,6 +58,7 @@ const Home = () => {
         body:{
           height: 100%;
         }
+
         .monitor{
           width: 100%;
           max-width:400px;
@@ -164,6 +165,7 @@ const Home = () => {
     grid-gap: 20px;
     height: 70vh;
     position: relative;
+    
 }
 
 #inner {
@@ -223,7 +225,7 @@ p.subtitle{
 }
 
 .cta{
-    background-color: #09BBE9;
+  background-image: linear-gradient(to top, #4481eb 0%, #04befe 100%);
     padding: 1em;
     color: #fff;
     font-weight: bold;
@@ -232,6 +234,9 @@ p.subtitle{
     border-radius: 5px;
     text-decoration: none;
     /* TODO: add glowing type animation while on hover */
+}
+.cta:hover{
+  opacity:0.8;
 }
 
 #monitor{
