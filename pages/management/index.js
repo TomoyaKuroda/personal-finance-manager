@@ -37,9 +37,9 @@ const useStyles = makeStyles(theme => ({
     margin: 0,
     fontSize: "0.8em"
   },
-  monthlyButton:{
-    backgroundColor:'white',
-    height:'1.5rem',
+  monthlyButton: {
+    backgroundColor: "white",
+    height: "1.5rem"
   }
 }));
 const ManagementSection = ({
@@ -65,16 +65,16 @@ const ManagementSection = ({
   };
 
   //Month Transaction
-  let thisMonth = new Date()
+  let thisMonth = new Date();
   function pad(number) {
     if (number < 10) {
-      return '0' + number;
+      return "0" + number;
     }
     return number;
   }
-  const [month, setMonth] = useState(`${thisMonth.getFullYear()}-${pad(thisMonth.getMonth()+1)}`);
-
-
+  const [month, setMonth] = useState(
+    `${thisMonth.getFullYear()}-${pad(thisMonth.getMonth() + 1)}`
+  );
 
   // net income
   let netIncomeThisMonth = [...netIncome];
@@ -89,18 +89,18 @@ const ManagementSection = ({
     )[0].netIncome;
   }
 
-
-  let monthlyTransactions = [...transactions]
+  let monthlyTransactions = [...transactions];
   if (transactions.length) {
-    monthlyTransactions = transactions.filter(item=>item.date.substring(0,7) === month)
+    monthlyTransactions = transactions.filter(
+      item => item.date.substring(0, 7) === month
+    );
   }
 
-
-//Update Month
-  const updateMonth = event =>{
-    handleTransactionClose()
-    setMonth(event.target.textContent)
-  }
+  //Update Month
+  const updateMonth = event => {
+    handleTransactionClose();
+    setMonth(event.target.textContent);
+  };
   //Menu
   const MenuButton = ({ transaction }) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -169,7 +169,7 @@ const ManagementSection = ({
                 </Typography>
               </>
             }
-            secondary={transaction.category + " / " + transaction.date}
+            secondary={transaction.date}
           />
         </ListItem>
         <Menu
@@ -232,27 +232,26 @@ const ManagementSection = ({
 
   return (
     <>
-            <Grid
-      justify="space-between" // Add it here :)
-      container 
-      spacing={24}
-    >
-            <Grid item>
-      <p className={classes.p}>
-        Total balance:{" "}
-        <NumberFormat
-          value={balance}
-          displayType={"text"}
-          thousandSeparator={true}
-          prefix={"$"}
-        />{" "}
-        <Link href="/management/balance">Update Balance</Link>
-        </p>
-</Grid>
-      <Grid item>
-<span 
->
-        <Button
+      <Grid
+        justify="space-between" // Add it here :)
+        container
+        spacing={24}
+      >
+        <Grid item>
+          <p className={classes.p}>
+            Total balance:{" "}
+            <NumberFormat
+              value={balance}
+              displayType={"text"}
+              thousandSeparator={true}
+              prefix={"$"}
+            />{" "}
+            <Link href="/management/balance">Update Balance</Link>
+          </p>
+        </Grid>
+        <Grid item>
+          <span>
+            <Button
               aria-controls="simple-menu"
               aria-haspopup="true"
               onClick={handleTransactionClick}
@@ -260,39 +259,40 @@ const ManagementSection = ({
             >
               {month}
             </Button>
-            </span>
-            </Grid>
-            </Grid>
+          </span>
+        </Grid>
+      </Grid>
 
-            <Menu
-            id="simple-menu"
-            anchorEl={transactionAnchorEl}
-            keepMounted
-            open={Boolean(transactionAnchorEl)}
-            onClose={handleTransactionClose}
-            PaperProps={{
-              style: {
-                maxHeight: 200,
-                width: 200
-              }
-            }}
-          >
-            {
-            netIncome.length ?
-            netIncome.sort((a, b) => a - b).map(value => {
+      <Menu
+        id="simple-menu"
+        anchorEl={transactionAnchorEl}
+        keepMounted
+        open={Boolean(transactionAnchorEl)}
+        onClose={handleTransactionClose}
+        PaperProps={{
+          style: {
+            maxHeight: 200,
+            width: 200
+          }
+        }}
+      >
+        {netIncome.length ? (
+          netIncome
+            .sort((a, b) => a - b)
+            .map(value => {
               return (
                 <MenuItem onClick={updateMonth} value={value.month}>
                   {value.month}
                 </MenuItem>
               );
-            }) : 
-            <MenuItem onClick={updateMonth} value={month}>
-                  {month}
-                </MenuItem>
-            }
-          </Menu>
+            })
+        ) : (
+          <MenuItem onClick={updateMonth} value={month}>
+            {month}
+          </MenuItem>
+        )}
+      </Menu>
 
-   
       <Grid container>
         <Grid item xs={12} sm={6}>
           <h2>Monthly net income</h2>
@@ -305,55 +305,51 @@ const ManagementSection = ({
             />
           </h3>
 
-{ (series[0] || series[1]) ? 
-<>
-<h2>Income</h2>
-<h3>
-            <NumberFormat
-              value={series[0]}
-              displayType={"text"}
-              thousandSeparator={true}
-              prefix={"$"}
-            />
-          </h3>
-<h2>Expense</h2>
-          <h3>
-            <NumberFormat
-              value={series[1]}
-              displayType={"text"}
-              thousandSeparator={true}
-              prefix={"$"}
-            />
-          </h3>
-</> : null
-}
- 
-
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          {series[0] || series[1] ? (
+            <>
+              <h2>Income</h2>
+              <h3>
+                <NumberFormat
+                  value={series[0]}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  prefix={"$"}
+                />
+              </h3>
+              <h2>Expense</h2>
+              <h3>
+                <NumberFormat
+                  value={series[1]}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  prefix={"$"}
+                />
+              </h3>
+            </>
+          ) : null}
+        </Grid>
+        <Grid item xs={12} sm={6}>
           <h2>Income and Expense Chart</h2>
           <Grid container justify="center">
-            {
-              series[0] || series[1] ?  <Chart options={options} series={series} type="pie" width="380" /> : <p>There is no transaction this month.</p>
-            }
-           
+            {series[0] || series[1] ? (
+              <Chart options={options} series={series} type="pie" width="380" />
+            ) : (
+              <p>There is no transaction this month.</p>
+            )}
           </Grid>
-</Grid>
+        </Grid>
         <Grid item xs={12} sm={12}>
-          <h2>
-            Monthly transactions{" "}
-          </h2>
+          <h2>Monthly transactions </h2>
 
-{
-  monthlyTransactions.length ? 
-  <List className={classes.root}>
-  {monthlyTransactions.map(transaction => (
-    <MenuButton transaction={transaction} key={transaction.id} />
-  ))}
-</List>
-: <p>There is no transaction this month</p>
-}
-
+          {monthlyTransactions.length ? (
+            <List className={classes.root}>
+              {monthlyTransactions.map(transaction => (
+                <MenuButton transaction={transaction} key={transaction.id} />
+              ))}
+            </List>
+          ) : (
+            <p>There is no transaction this month</p>
+          )}
 
           <Link href="/management/transaction">
             <button type="button">Add Transaction</button>

@@ -20,7 +20,7 @@ handler.post((req, res) => {
       if (count) {
         return Promise.reject(Error("The email has already been used."));
       }
-      return  bcrypt.hashSync(password);
+      return bcrypt.hashSync(password);
     })
     .then(hashedPassword =>
       req.db.collection("users").insertOne({
@@ -33,7 +33,7 @@ handler.post((req, res) => {
       req.session.userId = user.insertedId;
       res.status(201).send({
         status: "ok",
-        message: "User signed up successfully"
+        message: `Welcome ${name}!`
       });
     })
     .catch(error =>

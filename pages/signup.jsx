@@ -1,27 +1,27 @@
-import React, { useState, useContext } from 'react';
-import axioswal from 'axioswal';
-import { UserContext } from '../components/UserContext';
-import Layout from '../components/layout';
-import redirectTo from '../lib/redirectTo';
+import React, { useState, useContext } from "react";
+import axioswal from "axioswal";
+import { UserContext } from "../components/UserContext";
+import Layout from "../components/layout";
+import redirectTo from "../lib/redirectTo";
 
 const SignupPage = () => {
   const { dispatch } = useContext(UserContext);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     axioswal
-      .post('/api/users', {
+      .post("/api/users", {
         name,
         email,
-        password,
+        password
       })
-      .then((data) => {
-        if (data.status === 'ok') {
-          dispatch({ type: 'fetch' });
-          redirectTo('/management');
+      .then(data => {
+        if (data.status === "ok") {
+          dispatch({ type: "fetch" });
+          redirectTo("/management");
         }
       });
   };
@@ -37,6 +37,7 @@ const SignupPage = () => {
               placeholder="Your name"
               value={name}
               onChange={e => setName(e.target.value)}
+              required
             />
           </div>
           <div>
@@ -45,6 +46,7 @@ const SignupPage = () => {
               placeholder="Email address"
               value={email}
               onChange={e => setEmail(e.target.value)}
+              required
             />
           </div>
           <div>
@@ -53,11 +55,10 @@ const SignupPage = () => {
               placeholder="Create a password"
               value={password}
               onChange={e => setPassword(e.target.value)}
+              required
             />
           </div>
-          <button type="submit">
-            Sign up
-          </button>
+          <button type="submit">Sign up</button>
         </form>
       </div>
     </Layout>

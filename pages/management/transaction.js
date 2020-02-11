@@ -52,9 +52,7 @@ const TransactionSection = ({
     let convertedAmount =
       type === "income" ? Math.abs(amount) : -Math.abs(amount);
 
-
-
-      let newBalance = Number(balance);
+    let newBalance = Number(balance);
     if (parsed.id !== undefined) {
       const index = newTransactions.findIndex(e => e.id === parsed.id);
       newTransactions[index] = {
@@ -76,8 +74,6 @@ const TransactionSection = ({
       });
       newBalance += convertedAmount;
     }
-
- 
 
     // net income {month: value, netIncome: value}
     let convertedNetIncome = [...netIncome] || [];
@@ -135,14 +131,14 @@ const TransactionSection = ({
 
         <form onSubmit={handleSubmit}>
           <Grid container spacing={1}>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid item xs={12} sm={6}>
               <label htmlFor="type">Type</label>
               <select value={type} onChange={e => setType(e.target.value)}>
                 <option value="expense">Expense</option>
                 <option value="income">Income</option>
               </select>
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid item xs={12} sm={6}>
               <label htmlFor="date">Date</label>
               <input
                 id="date"
@@ -152,7 +148,7 @@ const TransactionSection = ({
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid item xs={12} sm={6}>
               <label htmlFor="amount">Amount</label>
               <NumberFormat
                 id="amount"
@@ -177,7 +173,7 @@ const TransactionSection = ({
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <label htmlFor="category">Category</label>
               <input
                 id="category"
@@ -186,7 +182,7 @@ const TransactionSection = ({
                 onChange={e => setCategory(e.target.value)}
                 required
               />
-            </Grid>
+            </Grid> */}
 
             <Grid item xs={12}>
               <button type="submit">Save</button>

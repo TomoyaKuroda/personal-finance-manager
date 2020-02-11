@@ -4,8 +4,10 @@ import Head from "../components/head";
 import Nav from "../components/nav";
 import { UserContext } from "../components/UserContext";
 import Layout from "../components/layout";
-
+import { useMediaQuery } from "react-responsive";
 const Home = () => {
+  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
   const [date, setDate] = useState(null);
   const {
     state: {
@@ -13,6 +15,7 @@ const Home = () => {
       user: { name }
     }
   } = useContext(UserContext);
+
   useEffect(() => {
     async function getDate() {
       const res = await fetch("/api/date");
@@ -29,56 +32,26 @@ const Home = () => {
           {/* <img src="../static/pfm1.png" alt="PFM logo" id="logo" height='200'/> */}
           <h1 className="text-align-left">Personal Finance Manager</h1>
           <p className="subtitle text-align-left">
-            Personal Finance Manager helps you manage your finance
+            Personal Finance Manager helps you manage your finance.
           </p>
           <p className="text-align-left">
             <Link href="/signup">
-              <a className="cta text-align-left">
-              Sign up
-              </a>
+              <a className="cta text-align-left">Sign up</a>
             </Link>
           </p>
         </div>
-
-        <div id="illustration">
-          {/* <img src="assets/dash.svg" alt="dash img" id="dash" className="crypto-icons"/>
-            <img src="assets/miota.svg" alt="iota img" id="iota" className="crypto-icons"/>
-            <img src="assets/eth.svg" alt="eth img" id="eth" className="crypto-icons"/> */}
-          <img
-            src="../static/mockup.png"
-            alt="monitor img"
-            id="monitor"
-            className="monitor"
-          />
-        </div>
-        {/* <div className="hero">
-        <h1 className="title">Personal Finance Manager</h1>
-        <p className="description">
-          We are here to help you manage your finance.
-        </p>
-
-        <img src="../static/sample.png" alt="Sample" className="center"/> 
-
-        {/* <div className='row'>
-          <Link href='https://github.com/zeit/next.js#setup'>
-            <a className='card'>
-              <h3>Getting Started &rarr;</h3>
-              <p>Learn more about Next.js on GitHub and in their examples.</p>
-            </a>
-          </Link>
-          <Link href='https://github.com/zeit/next.js/tree/master/examples'>
-            <a className='card'>
-              <h3>Examples &rarr;</h3>
-              <p>Find other example boilerplates on the Next.js GitHub.</p>
-            </a>
-          </Link>
-          <Link href='https://github.com/zeit/next.js'>
-            <a className='card'>
-              <h3>Create Next App &rarr;</h3>
-              <p>Was this tool helpful? Let us know how we can improve it!</p>
-            </a>
-          </Link>
-        </div> */}
+        {isTabletOrMobile ? (
+          <div></div>
+        ) : (
+          <div id="illustration">
+            <img
+              src="../static/mockup.png"
+              alt="monitor img"
+              id="monitor"
+              className="monitor"
+            />
+          </div>
+        )}
       </div>
 
       <style jsx>{`
@@ -190,6 +163,7 @@ const Home = () => {
     grid-template-rows: 10px 1fr 1fr 10px;
     grid-gap: 20px;
     height: 70vh;
+    position: relative;
 }
 
 #inner {
@@ -197,6 +171,10 @@ const Home = () => {
     grid-column: 2;
     align-self: center;
     justify-self: center;
+    position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 
 #illustration {
@@ -212,10 +190,13 @@ const Home = () => {
     #home-container {
         grid-template-columns: 0fr 1.6fr 1fr 0fr;
         grid-template-rows: 1fr;
+        position: initial;
     }
     #inner {
         grid-column: 2;
         grid-row: 1;
+        position: initial;
+        transform: none;
     }
 
     #illustration {
@@ -255,6 +236,7 @@ p.subtitle{
 
 #monitor{
     animation: monitorIn 1s ease-in-out forwards; /* assign animation to monitor with 'monitorIn' as keyframe name */
+    animation-delay: 0.5s;
     opacity: 0;
 }
 
