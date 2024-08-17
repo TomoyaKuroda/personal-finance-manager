@@ -8,8 +8,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "next",
-    "build": "next build",
-    "start": "next start"
+    "build": "next build --openssl-legacy-provider build",
+    "start": "next start --openssl-legacy-provider start"
   },
   "dependencies": {
     "@material-ui/core": "^4.7.1",
